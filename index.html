@@ -30,6 +30,11 @@
     </div>
 
     <div class="admin-panel" id="admin-panel">
+        <!-- TELA DE CARREGAMENTO ADICIONADA AQUI -->
+        <div class="loading-overlay" id="loading-overlay">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsHMFibLQgTQWHDIf6K530hRqMXTl80tHNcNAdSX2LXJ1FG0_SQWJSaAM&s=10" alt="Carregando..." class="loading-spinner">
+        </div>
+
         <div class="main-content" id="main-content">
             <div class="admin-header">
                 <h2>Painel do Resumo</h2>
@@ -54,6 +59,14 @@
                 <input type="number" id="sale-value" placeholder="Valor Total da Venda (Ex: 50)" step="0.01" required>
                 <button type="submit">Adicionar Venda</button>
             </form>
+            <!-- BOTÕES DE FILTRO -->
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="today">Hoje</button>
+                <button class="filter-btn" data-filter="yesterday">Ontem</button>
+                <button class="filter-btn" data-filter="this_month">Mês</button>
+                <button class="filter-btn" data-filter="this_year">Ano</button>
+            </div>
             <div class="table-container">
                 <table>
                     <thead><tr><th>Data</th><th>Venda Total</th><th>Meu Lucro</th><th>Lucro JP</th><th>Status</th><th>Ação</th></tr></thead>
