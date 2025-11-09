@@ -12,10 +12,23 @@
 <body>
     <div class="stars"></div>
     <div class="twinkling"></div>
+
     <div class="login-container" id="login-container">
         <h1>Painel A Firma 1.0</h1>
-        <form id="login-form"><div class="input-group"><input type="email" id="email" required><label for="email">Email</label></div><div class="input-group"><input type="password" id="password" required><label for="password">Senha</label></div><button type="submit" class="login-button">Acessar</button><p id="error-message"></p></form>
+        <form id="login-form">
+            <div class="input-group">
+                <input type="email" id="email" required>
+                <label for="email">Email</label>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" required>
+                <label for="password">Senha</label>
+            </div>
+            <button type="submit" class="login-button">Acessar</button>
+            <p id="error-message"></p>
+        </form>
     </div>
+
     <div class="admin-panel" id="admin-panel">
         <div class="main-content" id="main-content">
             <div class="admin-header">
@@ -25,6 +38,7 @@
                     <button class="options-menu-btn" id="options-menu-btn" title="Opções">⋮</button>
                     <ul class="dropdown-menu" id="dropdown-menu">
                         <li class="dropdown-item" id="open-chat-item">💬 Abrir Chat</li>
+                        <li class="dropdown-item" id="live-pix-item">🔗 Link Live PIX</li>
                     </ul>
                 </div>
             </div>
@@ -33,7 +47,7 @@
                 <div class="card jp-profit"><h3 >Lucro JP</h3><p class="amount" id="jp-total-profit">R$ 0.00</p></div>
                 <div class="card pending"><h3 >A Repassar</h3><p class="amount" id="total-pending">R$ 0.00</p></div>
                 <div class="card sales-count"><h3 >Nº de Vendas</h3><p class="amount" id="sales-count">0</p></div>
-                <div class="card gateway-tax"><h3 >Taxas</h3><p class="amount" id="total-gateway-tax">R$ 0.00</p></div>
+                <div class="card gateway-tax"><h3 >Taxas Live Pix</h3><p class="amount" id="total-gateway-tax">R$ 0.00</p></div>
                 <div class="card repassed"><h3 >Total Repassado</h3><p class="amount" id="total-repassed">R$ 0.00</p></div>
             </div>
             <form class="tracker-form" id="tracker-form">
@@ -47,8 +61,12 @@
                 </table>
             </div>
         </div>
+        
         <div class="sidebar-content" id="sidebar-content">
-            <div class="sidebar-header"><h3>Comunicação</h3><button class="close-sidebar-btn" id="close-sidebar-btn" title="Fechar">X</button></div>
+            <div class="sidebar-header">
+                <h3>Comunicação</h3>
+                <button class="close-sidebar-btn" id="close-sidebar-btn" title="Fechar">X</button>
+            </div>
             <div class="chat-messages" id="chat-messages"></div>
             <form id="chat-form">
                 <div class="author-selection">
@@ -60,8 +78,9 @@
             </form>
         </div>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
