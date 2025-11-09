@@ -210,8 +210,6 @@ openChatItem.addEventListener('click', () => {
         dropdownMenu.classList.remove('show');
     }, 500);
 });
-
-// CÓDIGO CORRIGIDO AQUI
 livePixItem.addEventListener('click', () => {
     showLoading();
     setTimeout(() => {
