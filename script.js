@@ -93,14 +93,14 @@ trackerForm.addEventListener('submit', (e) => {
 // --- LÓGICA DOS FILTROS DE DATA ---
 filtersContainer.addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON') {
-        showLoading(); // Mostra o loading ao clicar no filtro
+        showLoading();
         const filter = e.target.dataset.filter;
         currentFilter = filter;
         
         document.querySelector('.filter-btn.active').classList.remove('active');
         e.target.classList.add('active');
         
-        setTimeout(renderFilteredData, 500); // Pequeno delay para dar tempo de ver o loading
+        setTimeout(renderFilteredData, 500);
     }
 });
 
@@ -157,16 +157,20 @@ function renderTable(records) {
 }
 
 function updateDashboard(records) {
-    let myTotal = 0, jpTotal = 0, repassedTotal = 0, gatewayTaxTotal = 0;
+    let myTotal = 0, jpTotal = 0, repassedTotal = 0, gatewayTaxTotal = 0, pendingTotal = 0;
     records.forEach(record => {
         myTotal += record.myNetProfit;
         jpTotal += record.friendNetProfit;
         gatewayTaxTotal += record.gatewayTax;
-        if (record.status === 'paid') repassedTotal += record.friendNetProfit;
+        if (record.status === 'paid') {
+            repassedTotal += record.friendNetProfit;
+        } else { // CÁLCULO CORRIGIDO PARA "A REPASSAR"
+            pendingTotal += record.friendNetProfit;
+        }
     });
     myTotalProfitCard.textContent = `R$ ${myTotal.toFixed(2)}`;
     jpTotalProfitCard.textContent = `R$ ${jpTotal.toFixed(2)}`;
-    totalPendingCard.textContent = `R$ ${(jpTotal - repassedTotal).toFixed(2)}`;
+    totalPendingCard.textContent = `R$ ${pendingTotal.toFixed(2)}`; // USA A NOVA VARIÁVEL
     salesCountCard.textContent = records.length;
     totalGatewayTaxCard.textContent = `R$ ${gatewayTaxTotal.toFixed(2)}`;
     totalRepassedCard.textContent = `R$ ${repassedTotal.toFixed(2)}`;
@@ -199,7 +203,6 @@ const livePixItem = document.getElementById('live-pix-item');
 
 optionsMenuBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
 
-// Adiciona o loading aos itens do menu
 openChatItem.addEventListener('click', () => { 
     showLoading();
     setTimeout(() => {
@@ -210,9 +213,5 @@ openChatItem.addEventListener('click', () => {
 livePixItem.addEventListener('click', () => {
     showLoading();
     setTimeout(() => {
-        window.open('https://livepix.gg/user1524', '_blank');
-    }, 500);
-});
-
-closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('open'));
-            
+        window.open('https://
+                    
