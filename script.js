@@ -34,6 +34,15 @@ loginForm.addEventListener('submit', function(e) {
     }
 });
 
+// --- LÓGICA DE CARREGAMENTO (LOADING) ---
+const loadingOverlay = document.getElementById('loading-overlay');
+function showLoading(duration = 2000) {
+    loadingOverlay.classList.add('show');
+    setTimeout(() => {
+        loadingOverlay.classList.remove('show');
+    }, duration);
+}
+
 // --- Lógica do Dashboard ---
 const trackerForm = document.getElementById('tracker-form');
 const saleValueInput = document.getElementById('sale-value');
@@ -44,15 +53,18 @@ const totalPendingCard = document.getElementById('total-pending');
 const salesCountCard = document.getElementById('sales-count');
 const totalGatewayTaxCard = document.getElementById('total-gateway-tax');
 const totalRepassedCard = document.getElementById('total-repassed');
+const filtersContainer = document.querySelector('.filters');
+
+let allRecords = [];
+let currentFilter = 'all';
 
 function listenToSales() {
     db.collection("sales").orderBy("createdAt", "desc").onSnapshot(snapshot => {
-        let allRecords = [];
+        allRecords = [];
         snapshot.forEach(doc => {
             allRecords.push({ id: doc.id, ...doc.data() });
         });
-        renderTable(allRecords);
-        updateDashboard(allRecords);
+        renderFilteredData();
     });
 }
 
@@ -61,31 +73,70 @@ trackerForm.addEventListener('submit', (e) => {
     const saleValue = parseFloat(saleValueInput.value);
     if (isNaN(saleValue) || saleValue <= 0) return;
 
-    // --- LÓGICA DE CÁLCULO FINAL E CORRETA ---
-    const myGrossProfit = 20.00; // Seu lucro bruto é sempre R$ 20,00
+    const myGrossProfit = 20.00;
     const taxaGatewayPercent = 0.05;
     const taxaGatewayFixed = 0.50;
-
-    // 1. Calcula a taxa do gateway sobre o valor total da venda
     const gatewayTax = (saleValue * taxaGatewayPercent) + taxaGatewayFixed;
-
-    // 2. Calcula o seu lucro líquido (Lucro TH)
     const myNetProfit = myGrossProfit - gatewayTax;
-
-    // 3. Calcula o lucro do JP
     const friendNetProfit = saleValue - myGrossProfit;
-    // --- FIM DA LÓGICA CORRIGIDA ---
 
     db.collection("sales").add({
         totalSale: saleValue,
-        myNetProfit: myNetProfit,       // Seu lucro líquido
-        friendNetProfit: friendNetProfit, // Lucro do JP
-        gatewayTax: gatewayTax,           // A taxa, para referência
+        myNetProfit: myNetProfit,
+        friendNetProfit: friendNetProfit,
+        gatewayTax: gatewayTax,
         status: 'pending',
         createdAt: new Date()
     }).then(() => { saleValueInput.value = ''; });
 });
 
+// --- LÓGICA DOS FILTROS DE DATA ---
+filtersContainer.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+        showLoading(); // Mostra o loading ao clicar no filtro
+        const filter = e.target.dataset.filter;
+        currentFilter = filter;
+        
+        document.querySelector('.filter-btn.active').classList.remove('active');
+        e.target.classList.add('active');
+        
+        setTimeout(renderFilteredData, 500); // Pequeno delay para dar tempo de ver o loading
+    }
+});
+
+function getFilteredRecords() {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfYear = new Date(now.getFullYear(), 0, 1);
+
+    switch (currentFilter) {
+        case 'today':
+            return allRecords.filter(r => r.createdAt.toDate() >= today);
+        case 'yesterday':
+            return allRecords.filter(r => {
+                const recordDate = r.createdAt.toDate();
+                return recordDate >= yesterday && recordDate < today;
+            });
+        case 'this_month':
+            return allRecords.filter(r => r.createdAt.toDate() >= startOfMonth);
+        case 'this_year':
+            return allRecords.filter(r => r.createdAt.toDate() >= startOfYear);
+        case 'all':
+        default:
+            return allRecords;
+    }
+}
+
+function renderFilteredData() {
+    const filteredRecords = getFilteredRecords();
+    renderTable(filteredRecords);
+    updateDashboard(filteredRecords);
+}
+
+// --- Funções de Renderização ---
 window.toggleStatus = (id, currentStatus) => db.collection("sales").doc(id).update({ status: currentStatus === 'pending' ? 'paid' : 'pending' });
 window.deleteRecord = (id) => { if (confirm("Tem certeza?")) { db.collection("sales").doc(id).delete(); }};
 
@@ -147,8 +198,21 @@ const optionsMenuBtn = document.getElementById('options-menu-btn'), dropdownMenu
 const livePixItem = document.getElementById('live-pix-item'); 
 
 optionsMenuBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
-openChatItem.addEventListener('click', () => { sidebar.classList.add('open'); dropdownMenu.classList.remove('show'); });
-closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('open'));
 
-// LINK DO LIVE PIX ATUALIZADO AQUI
-livePixItem.addEventListener('click', () => window.open('https://livepix.gg/user1524', '_blank'));
+// Adiciona o loading aos itens do menu
+openChatItem.addEventListener('click', () => { 
+    showLoading();
+    setTimeout(() => {
+        sidebar.classList.add('open'); 
+        dropdownMenu.classList.remove('show');
+    }, 500);
+});
+livePixItem.addEventListener('click', () => {
+    showLoading();
+    setTimeout(() => {
+        window.open('https://livepix.gg/user1524', '_blank');
+    }, 500);
+});
+
+closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('open'));
+            
