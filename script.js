@@ -164,13 +164,13 @@ function updateDashboard(records) {
         gatewayTaxTotal += record.gatewayTax;
         if (record.status === 'paid') {
             repassedTotal += record.friendNetProfit;
-        } else { // CÁLCULO CORRIGIDO PARA "A REPASSAR"
+        } else {
             pendingTotal += record.friendNetProfit;
         }
     });
     myTotalProfitCard.textContent = `R$ ${myTotal.toFixed(2)}`;
     jpTotalProfitCard.textContent = `R$ ${jpTotal.toFixed(2)}`;
-    totalPendingCard.textContent = `R$ ${pendingTotal.toFixed(2)}`; // USA A NOVA VARIÁVEL
+    totalPendingCard.textContent = `R$ ${pendingTotal.toFixed(2)}`;
     salesCountCard.textContent = records.length;
     totalGatewayTaxCard.textContent = `R$ ${gatewayTaxTotal.toFixed(2)}`;
     totalRepassedCard.textContent = `R$ ${repassedTotal.toFixed(2)}`;
@@ -210,8 +210,13 @@ openChatItem.addEventListener('click', () => {
         dropdownMenu.classList.remove('show');
     }, 500);
 });
+
+// CÓDIGO CORRIGIDO AQUI
 livePixItem.addEventListener('click', () => {
     showLoading();
     setTimeout(() => {
-        window.open('https://
-                    
+        window.open('https://livepix.gg/user1524', '_blank');
+    }, 500);
+});
+
+closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('open'));
