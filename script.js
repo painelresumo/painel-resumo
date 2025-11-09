@@ -61,11 +61,22 @@ trackerForm.addEventListener('submit', (e) => {
     const saleValue = parseFloat(saleValueInput.value);
     if (isNaN(saleValue) || saleValue <= 0) return;
 
-    const myGrossCommission = 20.00, taxaGatewayPercent = 0.05, taxaGatewayFixed = 0.50;
+    // --- LÓGICA DE CÁLCULO CORRIGIDA ---
+    const taxaGatewayPercent = 0.05, taxaGatewayFixed = 0.50;
+    let myNetProfit; // Sua comissão (Lucro TH)
+
+    if (saleValue <= 50) {
+        myNetProfit = 20;
+    } else if (saleValue <= 100) {
+        myNetProfit = 30;
+    } else {
+        myNetProfit = 40;
+    }
+    // --- FIM DA LÓGICA CORRIGIDA ---
+
     const gatewayTax = (saleValue * taxaGatewayPercent) + taxaGatewayFixed;
     const netValue = saleValue - gatewayTax;
-    const myNetProfit = myGrossCommission;
-    const friendNetProfit = netValue - myNetProfit;
+    const friendNetProfit = netValue - myNetProfit; // Lucro JP
 
     db.collection("sales").add({
         totalSale: saleValue,
@@ -135,7 +146,11 @@ chatForm.addEventListener('submit', (e) => {
 
 // --- Lógica da Interface ---
 const optionsMenuBtn = document.getElementById('options-menu-btn'), dropdownMenu = document.getElementById('dropdown-menu'), openChatItem = document.getElementById('open-chat-item'), sidebar = document.getElementById('sidebar-content'), closeSidebarBtn = document.getElementById('close-sidebar-btn');
+const livePixItem = document.getElementById('live-pix-item'); 
+
 optionsMenuBtn.addEventListener('click', () => dropdownMenu.classList.toggle('show'));
 openChatItem.addEventListener('click', () => { sidebar.classList.add('open'); dropdownMenu.classList.remove('show'); });
 closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('open'));
-      
+
+// LINK DO LIVE PIX ATUALIZADO AQUI
+livePixItem.addEventListener('click', () => window.open('https://livepix.gg/user1524', '_blank'));
