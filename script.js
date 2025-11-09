@@ -61,28 +61,26 @@ trackerForm.addEventListener('submit', (e) => {
     const saleValue = parseFloat(saleValueInput.value);
     if (isNaN(saleValue) || saleValue <= 0) return;
 
-    // --- LÓGICA DE CÁLCULO CORRIGIDA ---
-    const taxaGatewayPercent = 0.05, taxaGatewayFixed = 0.50;
-    let myNetProfit; // Sua comissão (Lucro TH)
+    // --- LÓGICA DE CÁLCULO FINAL E CORRETA ---
+    const myGrossProfit = 20.00; // Seu lucro bruto é sempre R$ 20,00
+    const taxaGatewayPercent = 0.05;
+    const taxaGatewayFixed = 0.50;
 
-    if (saleValue <= 50) {
-        myNetProfit = 20;
-    } else if (saleValue <= 100) {
-        myNetProfit = 30;
-    } else {
-        myNetProfit = 40;
-    }
-    // --- FIM DA LÓGICA CORRIGIDA ---
-
+    // 1. Calcula a taxa do gateway sobre o valor total da venda
     const gatewayTax = (saleValue * taxaGatewayPercent) + taxaGatewayFixed;
-    const netValue = saleValue - gatewayTax;
-    const friendNetProfit = netValue - myNetProfit; // Lucro JP
+
+    // 2. Calcula o seu lucro líquido (Lucro TH)
+    const myNetProfit = myGrossProfit - gatewayTax;
+
+    // 3. Calcula o lucro do JP
+    const friendNetProfit = saleValue - myGrossProfit;
+    // --- FIM DA LÓGICA CORRIGIDA ---
 
     db.collection("sales").add({
         totalSale: saleValue,
-        myNetProfit: myNetProfit,
-        friendNetProfit: friendNetProfit,
-        gatewayTax: gatewayTax,
+        myNetProfit: myNetProfit,       // Seu lucro líquido
+        friendNetProfit: friendNetProfit, // Lucro do JP
+        gatewayTax: gatewayTax,           // A taxa, para referência
         status: 'pending',
         createdAt: new Date()
     }).then(() => { saleValueInput.value = ''; });
